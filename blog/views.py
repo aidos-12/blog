@@ -1,7 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect, get_object_or_404
 from django.http import HttpResponse
-from django.shortcuts import redirect
 from .models import Post,Category,Comment
+from .form import PostFrom,CommentForm,CategoryForm
+
 
 def home(request):
     context = {"title": "Main page in my blog"}
@@ -104,3 +105,46 @@ def orm_homework(request):
         result += f"- {post.title} ({post.created_at})\n"
 
     return HttpResponse(f"<pre>{result}</pre>")
+
+def post_form(request):
+    if request.method == 'POST':
+        form = PostFrom(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+
+    else:
+        form = PostFrom()
+    return render(request, 'blog/post_form.html', {'form': form})
+
+def comment_create(request,post_id):
+    post = get_object_or_404(Post, id = post_id)
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit = False)
+            comment.post = post
+            form.save()
+            return redirect('post_detail', post_id= post.id)
+    
+    else:
+        form = CommentForm()
+    return render(request, 'blog/comment_form.html', {'form': form, 'post' : post})
+
+def post_success(request):
+    return HttpResponse("<h2>Пост успешно создан!</h2>")
+
+def category_create(request):
+    if request.method == "POST":
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("post_success")
+
+    else:
+        form = CategoryForm()
+
+    return render(request, "blog/category_form.html", {
+        "form": form,
+    })
+
