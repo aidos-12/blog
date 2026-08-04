@@ -12,5 +12,9 @@ class PostAdmin(admin.ModelAdmin):
     search_fields = ('title', 'author')
 
 admin.site.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('name',)
 
 admin.site.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('text_comment',)
