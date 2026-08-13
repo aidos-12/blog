@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+
+<div style="
+    max-width:700px;
+    margin:60px auto;
+    padding:40px;
+    text-align:center;
+    background:#fff;
+    border-radius:16px;
+    box-shadow:0 10px 30px rgba(0,0,0,.1);
+">
+
+    <div style="font-size:70px;">🎉</div>
+
+    <h1 style="color:#2563eb;">{{ title }}</h1>
+
+    <p style="font-size:20px;color:#555;">
+        {{ message }}
+    </p>
+
+    <div style="margin-top:35px;">
+
+        <a href="{% url 'home' %}"
+           style="display:inline-block;padding:12px 28px;background:#2563eb;color:white;text-decoration:none;border-radius:8px;margin-right:10px;">
+            🏠 На главную
+        </a>
+
+        <button onclick="history.back()"
+                style="padding:12px 28px;background:#16a34a;color:white;border:none;border-radius:8px;cursor:pointer;">
+            ← Назад
+        </button>
+
+    </div>
+
+</div>
+
+{% endblock %}

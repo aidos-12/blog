@@ -1,20 +1,19 @@
 from django.contrib import admin
-from .models import Post
-from .models import Category
-from .models import Comment
+from .models import Post, Category, Comment
 
-# admin.site.register(Post)
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    list_display = ('title', 'author', 'created_at', 'is_published', 'is_featured')
+    list_display = ('title', 'author','category', 'created_at', 'is_published', 'is_featured')
     list_filter = ('is_published', 'is_featured')
     search_fields = ('title', 'author')
 
-admin.site.register(Category)
+
+@admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name',)
 
-admin.site.register(Comment)
+
+@admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('text_comment',)

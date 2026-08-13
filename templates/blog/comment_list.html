@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Комментарии{% endblock %}
+
+{% block content %}
+
+<h2>Все комментарии</h2>
+
+<ul>
+    {% for comment in comments %}
+        <li>
+            <strong>{{ comment.name_author }}</strong><br>
+            {{ comment.text_comment }}
+        </li>
+    {% empty %}
+        <li>Комментариев пока нет.</li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

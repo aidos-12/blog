@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Посты категории {{ category.name }}{% endblock %}
+
+{% block content %}
+
+<h2>Категория: {{ category.name }}</h2>
+
+<div class="posts-list">
+
+    {% for post in page_obj %}
+        <div class="post-card">
+
+            <h3>
+                <a href="{% url 'post_detail' post_id=post.id %}">
+                    {{ post.title }}
+                </a>
+            </h3>
+
+            <p>{{ post.content }}</p>
+            <p>Автор: {{ post.author }}</p>
+            <p>{{ post.created_at }}</p>
+
+        </div>
+    {% empty %}
+        <p>В этой категории постов пока нет.</p>
+    {% endfor %}
+
+</div>
+
+<div class="pagination">
+
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}">Назад</a>
+    {% endif %}
+
+    {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+            <strong>{{ num }}</strong>
+        {% else %}
+            <a href="?page={{ num }}">{{ num }}</a>
+        {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Вперед</a>
+    {% endif %}
+
+</div>
+
+{% endblock %}

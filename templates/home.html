@@ -4,16 +4,35 @@
 
 {% block content %}
 
-<h2>Добро пожаловать!</h2>
+<h2>Добро пожаловать в Blog System!</h2>
 
-<p>
-Это учебный проект на Django.
-Здесь можно ознакомиться с информацией о сайте,
-контактах и правилах использования.
-</p>
+<p>Выберите действие:</p>
 
-<a class="button" href="{% url 'about' %}">
-Узнать больше
-</a>
+<div class="actions">
+
+    <a class="button action-btn" href="{% url 'post_form' %}">
+        📝 Создать пост
+    </a>
+
+    <a class="button action-btn" href="{% url 'category_create' %}">
+        📂 Создать категорию
+    </a>
+
+    <a class="button action-btn" href="{% url 'post_list' %}">
+    📋 Все посты
+    </a>
+    <a class="button action-btn" href="{% url 'category_list' %}">
+        🗂️ Все категории
+    </a>
+
+    <a class="button action-btn" href="{% url 'comment_list' %}">
+        💬 Все комментарии
+    </a>
+
+    <a class="button action-btn" href="{% url 'about' %}">
+        ℹ️ Узнать больше
+    </a>
+
+</div>
 
 {% endblock %}

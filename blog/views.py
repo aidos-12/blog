@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect, get_object_or_404
 from django.http import HttpResponse
 from .models import Post,Category,Comment
 from .form import PostFrom,CommentForm,CategoryForm
-
+from django.core.paginator import Paginator
 
 def home(request):
     context = {"title": "Main page in my blog"}
@@ -111,7 +111,7 @@ def post_form(request):
         form = PostFrom(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('home')
+            return redirect("/blog/success/?title=Пост создан&message=Пост успешно добавлен!")
 
     else:
         form = PostFrom()
@@ -124,22 +124,19 @@ def comment_create(request,post_id):
         if form.is_valid():
             comment = form.save(commit = False)
             comment.post = post
-            form.save()
-            return redirect('post_detail', post_id= post.id)
-    
+            comment.save()
+            return redirect("/blog/success/?title=Комментарий добавлен&message=Спасибо за ваш комментарий!")
     else:
         form = CommentForm()
     return render(request, 'blog/comment_form.html', {'form': form, 'post' : post})
 
-def post_success(request):
-    return HttpResponse("<h2>Пост успешно создан!</h2>")
 
 def category_create(request):
     if request.method == "POST":
         form = CategoryForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect("post_success")
+            return redirect("/blog/success/?title=Категория создана&message=Новая категория успешно добавлена!")
 
     else:
         form = CategoryForm()
@@ -148,3 +145,42 @@ def category_create(request):
         "form": form,
     })
 
+def success(request):
+    return render(
+        request,
+        "blog/success.html",
+        {
+            "title": request.GET.get("title", "Успешно!"),
+            "message": request.GET.get("message", "Операция выполнена успешно."),
+        },
+    )
+
+def category_list(request):
+    categories = Category.objects.all()
+    return render(request, "blog/category_list.html", {
+        "categories": categories,
+    })
+
+
+def comment_list(request):
+    comments = Comment.objects.all()
+    return render(request, "blog/comment_list.html", {
+        "comments": comments,
+    })
+
+def post_list(request):
+    posts = Post.objects.filter(is_published=True).order_by('-created_at')
+    paginator = Paginator(posts, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, "blog/post_list.html", {'page_obj': page_obj})
+
+def posts_by_category(request, category_id):
+    category = get_object_or_404(Category, id=category_id)
+    posts = Post.objects.filter(category=category,is_published=True).order_by('-created_at')
+    paginator = Paginator(posts, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'blog/posts_by_category.html', {'page_obj': page_obj,'category': category,})

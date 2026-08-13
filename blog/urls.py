@@ -17,5 +17,9 @@ urlpatterns = [
     path("post_form", views.post_form, name="post_form"),
     path("post/<int:post_id>/comment",views.comment_create,name="comment_create"),
     path("categories/create/",views.category_create,name="category_create"),
-    path("posts/success/",views.post_success,name="post_success"),
+    path("success/", views.success, name="success"),
+    path("categories/", views.category_list, name="category_list"),
+    path("comments/", views.comment_list, name="comment_list"),
+    path("posts/all/", views.post_list, name="post_list"),
+    path('category/<int:category_id>/',views.posts_by_category,name='posts_by_category'),
 ]
