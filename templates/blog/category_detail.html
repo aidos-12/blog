@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ category.name }} - Blog System{% endblock %}
+
+{% block content %}
+
+<h2>{{ category.name }}</h2>
+
+<br>
+
+<a href="{% url 'category_update' category_id=category.id %}">
+    <button type="submit">Редактировать</button></a>
+
+<a href="{% url 'category_delete' category_id=category.id %}">
+    <button type="submit">Удалить</button></a>
+{% endblock %}

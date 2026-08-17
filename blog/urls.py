@@ -22,4 +22,12 @@ urlpatterns = [
     path("comments/", views.comment_list, name="comment_list"),
     path("posts/all/", views.post_list, name="post_list"),
     path('category/<int:category_id>/',views.posts_by_category,name='posts_by_category'),
+    path('post/<int:post_id>/edit/', views.post_update, name='post_update'),
+    path('post/<int:post_id>/delete/', views.post_delete, name='post_delete'),
+    path('category/<int:category_id>/', views.category_detail, name='category_detail'),
+    path('category/<int:category_id>/edit/', views.category_update, name='category_update'),
+    path('category/<int:category_id>/delete/', views.category_delete, name='category_delete'),
+    path('comment/<int:comment_id>/',views.comment_detail,name='comment_detail'),
+    path('comment/<int:comment_id>/edit/',views.comment_update,name='comment_update'),
+    path('comment/<int:comment_id>/delete/',views.comment_delete,name='comment_delete'),
 ]

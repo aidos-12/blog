@@ -10,7 +10,26 @@
     {% for comment in comments %}
         <li>
             <strong>{{ comment.name_author }}</strong><br>
-            {{ comment.text_comment }}
+
+            {{ comment.text_comment }}<br>
+
+            Пост:
+            <a href="{% url 'post_detail' post_id=comment.post.id %}">
+                {{ comment.post.title }}
+            </a>
+            <br>
+
+            <a href="{% url 'comment_detail' comment_id=comment.id %}">
+                Просмотр
+            </a>
+
+            <a href="{% url 'comment_update' comment_id=comment.id %}">
+                Редактировать
+            </a>
+
+            <a href="{% url 'comment_delete' comment_id=comment.id %}">
+                Удалить
+            </a>
         </li>
     {% empty %}
         <li>Комментариев пока нет.</li>

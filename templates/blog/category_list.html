@@ -6,12 +6,14 @@
 
 <h2>Все категории</h2>
 
-<ul>
-    {% for category in categories %}
-        <li>{{ category.name }}</li>
-    {% empty %}
-        <li>Категорий пока нет.</li>
-    {% endfor %}
-</ul>
+{% for category in categories %}
+    {{ category.name }}
+    <a href="{% url 'category_detail' category_id=category.id %}">Просмотр</a>
+    <a href="{% url 'category_update' category_id=category.id %}">Редактировать</a>
+    <a href="{% url 'category_delete' category_id=category.id %}">Удалить</a>
+    <br>
+{% empty %}
+    Категорий пока нет.
+{% endfor %}
 
 {% endblock %}

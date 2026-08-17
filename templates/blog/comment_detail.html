@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Комментарий - Blog System{% endblock %}
+
+{% block content %}
+
+<h2>Комментарий</h2>
+
+<p>{{ comment.text_comment }}</p>
+
+<br>
+
+<a href="{% url 'comment_update' comment_id=comment.id %}">
+    <button type="submit">Редактировать</button>
+</a>
+
+<a href="{% url 'comment_delete' comment_id=comment.id %}">
+    <button type="submit">Удалить</button>
+</a>
+
+{% endblock %}
