@@ -10,17 +10,36 @@
 
     {% for post in page_obj %}
         <div class="post-card">
-            <h3><a href="{% url 'post_detail' post_id=post.id %}">{{ post.title }}</a></h3>
+
+            <div class="post-header">
+
+                {% if post.image %}
+                    <img src="{{ post.image.url }}"
+                        alt="{{ post.title }}">
+                {% endif %}
+
+                <h3>
+                    <a href="{% url 'post_detail' post_id=post.id %}">
+                        {{ post.title }}
+                    </a>
+                </h3>
+
+            </div>
+
             <p class="post-content">{{ post.content }}</p>
             <p class="post-author">Автор: {{ post.author }}</p>
             <p class="post-date">{{ post.created_at }}</p>
 
             <a href="{% url 'post_update' post_id=post.id %}">
-                    Редактировать</a>
+                Редактировать
+            </a>
+
             <a href="{% url 'post_delete' post_id=post.id %}">
-                    Удалить</a>
-                    
+                Удалить
+            </a>
+
         </div>
+
     {% empty %}
         <p>Постов пока нет.</p>
     {% endfor %}
@@ -30,19 +49,25 @@
 <div class="pagination">
 
     {% if page_obj.has_previous %}
-        <a href="?page={{ page_obj.previous_page_number }}">Назад</a>
+        <a href="?page={{ page_obj.previous_page_number }}">
+            Назад
+        </a>
     {% endif %}
 
     {% for num in page_obj.paginator.page_range %}
+
         {% if page_obj.number == num %}
             <strong>{{ num }}</strong>
         {% else %}
             <a href="?page={{ num }}">{{ num }}</a>
         {% endif %}
+
     {% endfor %}
 
     {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}">Вперед</a>
+        <a href="?page={{ page_obj.next_page_number }}">
+            Вперед
+        </a>
     {% endif %}
 
 </div>

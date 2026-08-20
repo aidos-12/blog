@@ -12,16 +12,28 @@
     <p>Категория: {{ post.category.name }}</p>
 {% endif %}
 
+{% if post.image %}
+    <div class="post-image">
+        <img
+            src="{{ post.image.url }}"
+            alt="{{ post.title }}"
+        >
+    </div>
+{% endif %}
+
 <p>{{ post.content }}</p>
 
 <h3>Комментарии</h3>
 
 {% for comment in post.comments.all %}
-    <p>{{ comment.text_comment }} - {{ comment.created_at }}</p>
-{% empty %}
-    <p>Комментариев пока нет.</p>
+    <div>{{ comment.name_author }}
+        <p>{{ comment.text_comment }}</p>
+        {% if comment.image %}
+            <img src="{{ comment.image.url }}"
+                alt="Изображение комментария">
+        {% endif %}
+    </div>
 {% endfor %}
-
 <br>
 
 <a href="{% url 'post_update' post_id=post.id %}">

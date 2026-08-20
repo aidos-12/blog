@@ -117,15 +117,25 @@ def post_form(request):
         form = PostForm()
     return render(request, 'blog/post_form.html', {'form': form})
 
+def post_create(request):
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = PostForm()
+    return render(request,'blog/post_form.html',{'form': form})
+
 def comment_create(request,post_id):
     post = get_object_or_404(Post, id = post_id)
     if request.method == 'POST':
-        form = CommentForm(request.POST)
+        form = CommentForm(request.POST, request.FILES)
         if form.is_valid():
             comment = form.save(commit = False)
             comment.post = post
             comment.save()
-            return redirect("/blog/success/?title=Комментарий добавлен&message=Спасибо за ваш комментарий!")
+            return redirect(f'/success/?title=Комментарий добавлен&message=Спасибо за ваш комментарий!')
     else:
         form = CommentForm()
     return render(request, 'blog/comment_form.html', {'form': form, 'post' : post})
@@ -137,23 +147,14 @@ def category_create(request):
         if form.is_valid():
             form.save()
             return redirect("/blog/success/?title=Категория создана&message=Новая категория успешно добавлена!")
-
     else:
         form = CategoryForm()
-
-    return render(request, "blog/category_form.html", {
-        "form": form,
-    })
+    return render(request, "blog/category_form.html", {"form": form,})
 
 def success(request):
-    return render(
-        request,
-        "blog/success.html",
-        {
-            "title": request.GET.get("title", "Успешно!"),
-            "message": request.GET.get("message", "Операция выполнена успешно."),
-        },
-    )
+    return render(request,"blog/success.html",
+        {"title": request.GET.get("title", "Успешно!"),
+        "message": request.GET.get("message", "Операция выполнена успешно."),},)
 
 def category_list(request):
     categories = Category.objects.all()
@@ -193,7 +194,7 @@ def post_detail(request, post_id):
 def post_update(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     if request.method == 'POST':
-        form = PostForm(request.POST, instance=post)
+        form = PostForm(request.POST,request.FILES, instance=post)
         if form.is_valid():
             form.save()
             return redirect('post_detail', post_id=post.id)
@@ -242,7 +243,7 @@ def comment_detail(request, comment_id):
 def comment_update(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
     if request.method == 'POST':
-        form = CommentForm(request.POST, instance=comment)
+        form = CommentForm(request.POST, request.FILES, instance=comment)
         if form.is_valid():
             form.save()
             return redirect('post_detail',post_id=comment.post.id)

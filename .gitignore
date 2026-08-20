@@ -220,3 +220,6 @@ __marimo__/
 =======
 .streamlit/secrets.toml
 >>>>>>> 715a6cbb447db693952edbd3242a497603c9d46e
+
+# Media
+media/

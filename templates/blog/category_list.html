@@ -8,7 +8,7 @@
 
 {% for category in categories %}
     {{ category.name }}
-    <a href="{% url 'category_detail' category_id=category.id %}">Просмотр</a>
+    <a href="{% url 'posts_by_category' category_id=category.id %}">Просмотр</a>
     <a href="{% url 'category_update' category_id=category.id %}">Редактировать</a>
     <a href="{% url 'category_delete' category_id=category.id %}">Удалить</a>
     <br>
