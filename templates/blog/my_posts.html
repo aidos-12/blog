@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Мои посты{% endblock %}
+
+{% block content %}
+
+<h2>Мои посты</h2>
+
+{% if posts %}
+    {% for post in posts %}
+        <article>
+            <h3>{{ post.title }}</h3>
+
+            <p>{{ post.content|truncatechars:150 }}</p>
+
+            <p>
+                Автор: {{ post.author }}
+            </p>
+
+            <a href="{% url 'post_detail' post_id=post.id %}">
+                Подробнее
+            </a>
+        </article>
+
+        <hr>
+    {% endfor %}
+{% else %}
+    <p>У вас пока нет постов.</p>
+{% endif %}
+
+{% endblock %}

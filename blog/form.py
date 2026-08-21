@@ -1,5 +1,5 @@
 from django import forms
-from .models import Post,Comment,Category
+from .models import Post, Comment, Category, Profile
 
 class PostForm(forms.ModelForm):
     class Meta:
@@ -31,3 +31,9 @@ class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
         fields = ['name']
+
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['avatar','bio']

@@ -1,8 +1,11 @@
 from django.shortcuts import render,redirect, get_object_or_404
 from django.http import HttpResponse
-from .models import Post,Category,Comment
-from .form import PostForm,CommentForm,CategoryForm
+from .models import Post,Category,Comment,Profile
+from .form import PostForm,CommentForm,CategoryForm,ProfileForm
 from django.core.paginator import Paginator
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
+
 
 def home(request):
     context = {"title": "Main page in my blog"}
@@ -23,8 +26,6 @@ def rules(request):
     context = {"title": "Rules"}
     return render(request, "rules.html", context)
 
-# def post_detail(request, post_id):
-#     return HttpResponse(f"Пост номер {post_id}")
 
 def search(request):
     query = request.GET.get("q", "")
@@ -106,13 +107,16 @@ def orm_homework(request):
 
     return HttpResponse(f"<pre>{result}</pre>")
 
+@login_required
 def post_form(request):
     if request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect("/blog/success/?title=Пост создан&message=Пост успешно добавлен!")
-
+            post = form.save(commit=False)
+            post.author = request.user.username
+            post.save()
+            return redirect(
+                "/success/?title=Пост создан&message=Пост успешно добавлен!")
     else:
         form = PostForm()
     return render(request, 'blog/post_form.html', {'form': form})
@@ -261,3 +265,38 @@ def comment_delete(request, comment_id):
         return redirect('post_detail',post_id=post_id)
     return render(request,'blog/comment_confirm_delete.html',{'comment': comment})
 
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+    else:
+        form = UserCreationForm()
+
+    return render(request, 'blog/register.html', {'form': form})
+
+@login_required
+def profile_view(request):
+    return render(request, 'blog/profile.html', {'profile_user': request.user})
+
+
+@login_required
+def profile_edit(request):
+    profile = request.user.profile
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')
+    else:
+        form = ProfileForm(instance=profile)
+
+    return render(request,'blog/profile_edit.html',{'form': form})
+
+
+@login_required
+def my_posts(request):
+    posts = Post.objects.filter(author=request.user.username)
+    return render(request,'blog/my_posts.html', {'posts': posts} )
