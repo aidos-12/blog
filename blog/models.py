@@ -13,13 +13,24 @@ class Category(models.Model):
 
 
 class Post(models.Model):
-    author = models.CharField(max_length=100)
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='posts_authored',
+        null=True,
+        blank=True
+    )
+
     image = models.ImageField(
         upload_to='posts/',
         blank=True,
         null=True
     )
-    title = models.CharField(max_length=200)
+
+    title = models.CharField(
+        max_length=200
+    )
+
     slug = models.SlugField(
         max_length=255,
         unique=True,
@@ -27,11 +38,20 @@ class Post(models.Model):
         null=True,
         allow_unicode=True
     )
+
     content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    is_published = models.BooleanField(default=False)
-    views_count = models.IntegerField(default=0)
-    
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    is_published = models.BooleanField(
+        default=False
+    )
+
+    views_count = models.IntegerField(
+        default=0
+    )
 
     category = models.ForeignKey(
         Category,
@@ -51,9 +71,16 @@ class Comment(models.Model):
         blank=True,
         null=True
     )
+
     text_comment = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    name_author = models.CharField(max_length=20)
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    name_author = models.CharField(
+        max_length=20
+    )
 
     post = models.ForeignKey(
         Post,
@@ -66,9 +93,26 @@ class Comment(models.Model):
 
 
 class Profile(models.Model):
-    user = models.OneToOneField(User,on_delete=models.CASCADE,related_name='profile')
-    bio = models.TextField(blank=True)
-    avatar = models.ImageField(upload_to='avatars/',blank=True, null=True)
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name='profile'
+    )
+
+    bio = models.TextField(
+        blank=True
+    )
+
+    avatar = models.ImageField(
+        upload_to='avatars/',
+        blank=True,
+        null=True
+    )
+
+    last_confirmation_sent = models.DateTimeField(
+        null=True,
+        blank=True
+    )
 
     def __str__(self):
         return self.user.username

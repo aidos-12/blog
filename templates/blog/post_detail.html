@@ -7,6 +7,7 @@
 <h2>{{ post.title }}</h2>
 
 <p>{{ post.created_at }}</p>
+<p>Автор: {{ post.author.username }}</p>
 
 {% if post.category %}
     <p>Категория: {{ post.category.name }}</p>
@@ -14,10 +15,7 @@
 
 {% if post.image %}
     <div class="post-image">
-        <img
-            src="{{ post.image.url }}"
-            alt="{{ post.title }}"
-        >
+        <img src="{{ post.image.url }}" alt="{{ post.title }}">
     </div>
 {% endif %}
 
@@ -26,25 +24,40 @@
 <h3>Комментарии</h3>
 
 {% for comment in post.comments.all %}
-    <div>{{ comment.name_author }}
+    <div>
+        <p>Автор: {{ comment.name_author }}</p>
         <p>{{ comment.text_comment }}</p>
+
         {% if comment.image %}
-            <img src="{{ comment.image.url }}"
-                alt="Изображение комментария">
+            <img src="{{ comment.image.url }}" alt="Изображение комментария">
+        {% endif %}
+
+        {% if comment.name_author == user.username or user.is_superuser %}
+            <a href="{% url 'comment_update' comment_id=comment.id %}">
+                <button type="submit">Редактировать</button>
+            </a>
+
+            <a href="{% url 'comment_delete' comment_id=comment.id %}">
+                <button type="submit">Удалить</button>
+            </a>
         {% endif %}
     </div>
 {% endfor %}
+
 <br>
 
-<a href="{% url 'post_update' post_id=post.id %}">
-    <button type="submit">Редактировать</button>
-</a>
+{% if post.author == user or user.is_superuser %}
+    <a href="{% url 'post_update' post_id=post.id %}">
+        <button type="submit">Редактировать</button>
+    </a>
 
-<a href="{% url 'post_delete' post_id=post.id %}">
-    <button type="submit">Удалить</button>
-</a>
+    <a href="{% url 'post_delete' post_id=post.id %}">
+        <button type="submit">Удалить</button>
+    </a>
+{% endif %}
 
 <a href="{% url 'comment_create' post_id=post.id %}">
     <button type="submit">Добавить комментарий</button>
 </a>
+
 {% endblock %}
