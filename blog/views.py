@@ -12,6 +12,7 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils import timezone
 from datetime import timedelta
+from django.db.models import Q
 
 RESEND_COOLDOWN_SECONDS = 60
 
@@ -199,20 +200,95 @@ def success(request):
 
 def category_list(request):
     categories = Category.objects.all()
-    return render(request, "blog/category_list.html", {"categories": categories})
+
+    query = request.GET.get('q', '')
+    if query:
+        categories = categories.filter(name__icontains=query)
+
+    sort = request.GET.get('sort', '-created_at')
+    allowed_sorts = ['created_at', '-created_at']
+    if sort not in allowed_sorts:
+        sort = '-created_at'
+    categories = categories.order_by(sort)
+
+
+    per_page = request.GET.get('per_page', 5)
+    try:
+        per_page = int(per_page)
+    except ValueError:
+        per_page = 5
+
+    paginator = Paginator(categories, per_page)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'blog/category_list.html', {
+        'page_obj': page_obj,
+        'query': query,
+        'sort': sort,
+    })
 
 
 def comment_list(request):
     comments = Comment.objects.all()
-    return render(request, "blog/comment_list.html", {"comments": comments})
+    query = request.GET.get('q', '')
+    if query:
+        comments = comments.filter(Q(text_comment__icontains=query) | Q(name_author__icontains=query))
+    comments = comments.order_by('-created_at')
+
+    per_page = request.GET.get('per_page', 5)
+    try:
+        per_page = int(per_page)
+    except ValueError:
+        per_page = 5
+
+    paginator = Paginator(comments, per_page)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'blog/comment_list.html', {
+        'page_obj': page_obj,
+        'query': query,
+    })
 
 
 def post_list(request):
-    posts = Post.objects.filter(is_published=True).order_by("-created_at")
-    paginator = Paginator(posts, 5)
-    page_obj = paginator.get_page(request.GET.get("page"))
-    return render(request, "blog/post_list.html", {"page_obj": page_obj})
+    posts = Post.objects.filter(is_published=True)
 
+    query = request.GET.get('q', '')
+    if query:
+        posts = posts.filter(Q(title__icontains=query) | Q(content__icontains=query))
+
+    selected_category = request.GET.get('category', '')
+    if selected_category:
+        posts = posts.filter(category_id=selected_category)
+
+    sort = request.GET.get('sort', '-created_at')
+    allowed_sorts = ['created_at', '-created_at', '-views_count']
+    if sort not in allowed_sorts:
+        sort = '-created_at'
+    posts = posts.order_by(sort)
+
+
+    per_page = request.GET.get('per_page', 5)
+    try:
+        per_page = int(per_page)
+    except ValueError:
+        per_page = 5
+
+    paginator = Paginator(posts, per_page)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    categories = Category.objects.all()
+
+    return render(request, 'blog/post_list.html', {
+        'page_obj': page_obj,
+        'query': query,
+        'categories': categories,
+        'selected_category': selected_category,
+        'sort': sort,
+    })
 
 def posts_by_category(request, category_id):
     category = get_object_or_404(Category, id=category_id)

@@ -1,39 +1,40 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
-{% block title %}Комментарии{% endblock %}
+{% block title %}Комментарии — Blog System{% endblock %}
 
 {% block content %}
 
-<h2>Все комментарии</h2>
+<h2>Комментарии</h2>
 
-<ul>
-    {% for comment in comments %}
-        <li>
-            <strong>{{ comment.name_author }}</strong><br>
+<form method="get">
+    <input type="text" name="q" value="{{ query }}" placeholder="Поиск по тексту и имени автора">
 
-            {{ comment.text_comment }}<br>
+    <button type="submit">Поиск</button>
+    <a href="{% url 'comment_list' %}">Сбросить поиск</a>
+</form>
 
-            Пост:
-            <a href="{% url 'post_detail' post_id=comment.post.id %}">
-                {{ comment.post.title }}
-            </a>
-            <br>
+{% for comment in page_obj %}
+    <div>
+        <p><strong>{{ comment.name_author }}</strong></p>
+        <p>{{ comment.text_comment }}</p>
+        <p>{{ comment.created_at }}</p>
+    </div>
+{% empty %}
+    <p>Комментариев пока нет.</p>
+{% endfor %}
 
-            <a href="{% url 'comment_detail' comment_id=comment.id %}">
-                Просмотр
-            </a>
+<div>
+    {% if page_obj.has_previous %}
+        <a href="?q={{ query }}&page={{ page_obj.previous_page_number }}">Назад</a>
+    {% endif %}
 
-            <a href="{% url 'comment_update' comment_id=comment.id %}">
-                Редактировать
-            </a>
+    <span>
+        Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+    </span>
 
-            <a href="{% url 'comment_delete' comment_id=comment.id %}">
-                Удалить
-            </a>
-        </li>
-    {% empty %}
-        <li>Комментариев пока нет.</li>
-    {% endfor %}
-</ul>
+    {% if page_obj.has_next %}
+        <a href="?q={{ query }}&page={{ page_obj.next_page_number }}">Вперёд</a>
+    {% endif %}
+</div>
 
 {% endblock %}

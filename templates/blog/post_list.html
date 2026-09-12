@@ -1,74 +1,68 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
-{% block title %}Все посты{% endblock %}
+{% block title %}Все публикации — Blog System{% endblock %}
 
 {% block content %}
 
-<h2>Все посты</h2>
+<h2>Публикации</h2>
 
-<div class="posts-list">
+<form method="get">
+    <input type="text" name="q" value="{{ query }}" placeholder="Поиск по заголовку и тексту">
 
-    {% for post in page_obj %}
-        <div class="post-card">
+    <select name="category">
+        <option value="">Все категории</option>
+        {% for category in categories %}
+            <option value="{{ category.id }}" {% if category.id|stringformat:'s' == selected_category %}selected{% endif %}>
+                {{ category.name }}
+            </option>
+        {% endfor %}
+    </select>
 
-            <div class="post-header">
+    <select name="sort">
+        <option value="created_at" {% if sort == 'created_at' %}selected{% endif %}>Сначала старые</option>
+        <option value="-created_at" {% if sort == '-created_at' %}selected{% endif %}>Сначала новые</option>
+        <option value="-views_count" {% if sort == '-views_count' %}selected{% endif %}>По просмотрам</option>
+    </select>
 
-                {% if post.image %}
-                    <img src="{{ post.image.url }}" alt="{{ post.title }}">
-                {% endif %}
+    <button type="submit">Применить</button>
+    <a href="{% url 'post_list' %}">Сбросить фильтры</a>
+</form>
 
-                <h3>
-                    <a href="{% url 'post_detail' post_id=post.id %}">
-                        {{ post.title }}
-                    </a>
-                </h3>
+{% for post in page_obj %}
+    <div>
+        {% if post.image %}
+            <img src="{{ post.image.url }}" alt="{{ post.title }}" style="max-width: 150px;">
+        {% endif %}
 
-            </div>
+        <h3>
+            <a href="{% url 'post_detail' post_id=post.id %}">
+                {{ post.title }}
+            </a>
+        </h3>
 
-            <p class="post-content">{{ post.content }}</p>
-            <p class="post-author">Автор: {{ post.author.username }}</p>
-            <p class="post-date">{{ post.created_at }}</p>
+        <p>{{ post.created_at }} | Просмотров: {{ post.views_count }}</p>
 
-            {% if post.author == user or user.is_superuser %}
-                <a href="{% url 'post_update' post_id=post.id %}">Редактировать</a>
-                <a href="{% url 'post_delete' post_id=post.id %}">Удалить</a>
-            {% endif %}
+        {% if post.author == user or user.is_superuser %}
+            <a href="{% url 'post_update' post_id=post.id %}">Редактировать</a> |
+            <a href="{% url 'post_delete' post_id=post.id %}">Удалить</a>
+        {% endif %}
+    </div>
+{% empty %}
+    <p>Публикаций пока нет.</p>
+{% endfor %}
 
-        </div>
-
-    {% empty %}
-        <p>Постов пока нет.</p>
-    {% endfor %}
-
-</div>
-
-<div class="pagination">
-
+<div>
     {% if page_obj.has_previous %}
-        <a href="?page={{ page_obj.previous_page_number }}">Назад</a>
+        <a href="?q={{ query }}&category={{ selected_category }}&sort={{ sort }}&page={{ page_obj.previous_page_number }}">Назад</a>
     {% endif %}
 
-    {% for num in page_obj.paginator.page_range %}
-        {% if page_obj.number == num %}
-            <strong>{{ num }}</strong>
-        {% else %}
-            <a href="?page={{ num }}">{{ num }}</a>
-        {% endif %}
-    {% endfor %}
+    <span>
+        Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+    </span>
 
     {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}">Вперед</a>
+        <a href="?q={{ query }}&category={{ selected_category }}&sort={{ sort }}&page={{ page_obj.next_page_number }}">Вперёд</a>
     {% endif %}
-
 </div>
 
 {% endblock %}
-```
-
-Главное изменение здесь:
-
-```html
-{% if post.author == user %}
-    <a href="{% url 'post_update' post_id=post.id %}">Редактировать</a>
-    <a href="{% url 'post_delete' post_id=post.id %}">Удалить</a>
-{% endif %}

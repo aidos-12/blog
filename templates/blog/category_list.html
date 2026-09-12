@@ -1,19 +1,45 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
-{% block title %}Категории{% endblock %}
+{% block title %}Категории — Blog System{% endblock %}
 
 {% block content %}
 
-<h2>Все категории</h2>
+<h2>Категории</h2>
 
-{% for category in categories %}
-    {{ category.name }}
-    <a href="{% url 'posts_by_category' category_id=category.id %}">Просмотр</a>
-    <a href="{% url 'category_update' category_id=category.id %}">Редактировать</a>
-    <a href="{% url 'category_delete' category_id=category.id %}">Удалить</a>
-    <br>
+<form method="get">
+    <input type="text" name="q" value="{{ query }}" placeholder="Поиск по названию">
+
+    <select name="sort">
+        <option value="-created_at" {% if sort == '-created_at' %}selected{% endif %}>Сначала новые</option>
+        <option value="created_at" {% if sort == 'created_at' %}selected{% endif %}>Сначала старые</option>
+    </select>
+
+    <button type="submit">Применить</button>
+    <a href="{% url 'category_list' %}">Сбросить фильтры</a>
+</form>
+
+{% for category in page_obj %}
+    <div>
+        <h3>{{ category.name }}</h3>
+        <p>{{ category.description }}</p>
+        <p>{{ category.created_at }}</p>
+    </div>
 {% empty %}
-    Категорий пока нет.
+    <p>Категорий пока нет.</p>
 {% endfor %}
+
+<div>
+    {% if page_obj.has_previous %}
+        <a href="?q={{ query }}&sort={{ sort }}&page={{ page_obj.previous_page_number }}">Назад</a>
+    {% endif %}
+
+    <span>
+        Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+    </span>
+
+    {% if page_obj.has_next %}
+        <a href="?q={{ query }}&sort={{ sort }}&page={{ page_obj.next_page_number }}">Вперёд</a>
+    {% endif %}
+</div>
 
 {% endblock %}
