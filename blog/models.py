@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.translation import gettext_lazy as _
 
 
 class Category(models.Model):
@@ -27,9 +28,7 @@ class Post(models.Model):
         null=True
     )
 
-    title = models.CharField(
-        max_length=200
-    )
+    title = models.CharField(max_length=200, verbose_name=_('Заголовок'))
 
     slug = models.SlugField(
         max_length=255,
