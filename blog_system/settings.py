@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 from pathlib import Path
 from dotenv import load_dotenv
 from decouple import config
+import dj_database_url
 import os
 
 load_dotenv()
@@ -80,6 +81,7 @@ WSGI_APPLICATION = 'blog_system.wsgi.application'
 
 DATABASES = {
     'default': {
+        "default": dj_database_url.parse(config("DATABASE_URL")),
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'db_aprill',
         'USER': 'postgres',
