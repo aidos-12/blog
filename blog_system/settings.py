@@ -80,17 +80,15 @@ WSGI_APPLICATION = 'blog_system.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        "default": dj_database_url.parse(config("DATABASE_URL")),
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'db_aprill',
-        'USER': 'postgres',
-        'PASSWORD': '123',
-        'HOST': '127.0.0.1',
-        'POST': '5432'
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": config("DB_NAME"),
+        "USER": config("DB_USER"),
+        "PASSWORD": config("DB_PASSWORD"),
+        "HOST": config("DB_HOST"),
+        "PORT": config("DB_PORT"),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
